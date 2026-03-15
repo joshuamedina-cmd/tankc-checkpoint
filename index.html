@@ -810,24 +810,34 @@ a, button, input, textarea, select {
     <div class="card">
       <div class="card-body">
         <div class="login-wrap">
-          <label class="login-label" for="operator-code">Enter Your Operator Code</label>
-          <input
-            type="text"
-            id="operator-code"
-            class="login-input"
-            placeholder="0000"
-            maxlength="4"
-            autocomplete="off"
-            autocapitalize="characters"
-            spellcheck="false"
-            inputmode="numeric"
-            pattern="[0-9]*"
-          >
-          <div class="error-msg" id="login-error">Invalid operator code</div>
-          <div class="login-hint">Enter your 4-character code to continue</div>
-          <button class="btn btn-accent btn-full" id="login-btn" type="button">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-            Login
+          <label class="login-label" for="operatorSelect">Select Your Name</label>
+          <select id="operatorSelect" class="login-input" style="text-align:left; letter-spacing:normal; text-transform:none; font-size:1rem; appearance:none; -webkit-appearance:none; cursor:pointer; background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%231565C0%22 stroke-width=%222.5%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><polyline points=%225 9 12 15 19 9%22/></svg>'); background-repeat:no-repeat; background-position:right 16px center;">
+              <option value="" disabled selected>— Select your name —</option>
+              <option value="Arturo">Arturo</option>
+              <option value="Bobby">Bobby</option>
+              <option value="Cris">Cris</option>
+              <option value="Dylan S">Dylan S</option>
+              <option value="Eli">Eli</option>
+              <option value="FernDawg">FernDawg</option>
+              <option value="Frank">Frank</option>
+              <option value="George">George</option>
+              <option value="George T">George T</option>
+              <option value="JDub">JDub</option>
+              <option value="JJ">JJ</option>
+              <option value="Jaime D">Jaime D</option>
+              <option value="Jaime P">Jaime P</option>
+              <option value="Jeremy">Jeremy</option>
+              <option value="Josh">Josh</option>
+              <option value="KD">KD</option>
+              <option value="Laker">Laker</option>
+              <option value="Moh">Moh</option>
+              <option value="Q">Q</option>
+              <option value="Quentin">Quentin</option>
+              <option value="Sly">Sly</option>
+              <option value="Zee">Zee</option>
+          </select>
+          <button class="btn btn-accent btn-full" id="login-btn" type="button" style="margin-top:12px;">
+            Continue
           </button>
         </div>
       </div>
@@ -969,30 +979,6 @@ var MONDAY_API   = 'https://api.monday.com/v2';
 var MONDAY_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjYyNzA3NzcxOSwiYWFpIjoxMSwidWlkIjo3NTA2NTY3OCwiaWFkIjoiMjAyNi0wMi0yOFQwMToxNzowOS4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjkxNDg2NzMsInJnbiI6InVzZTEifQ.ocD9w0Q-17JqNfU4iZXL4i3frn_Bw4pyVe_fkhJuiPg';
 var BOARD_ID     = '18402821844';
 var TANK_C_GROUP = 'group_mm163d9y';   // Tank C
-
-var OPERATORS = {
-  '4821': 'Josh',
-  '0420': 'Q',
-  '1911': 'Jaime D',
-  '4093': 'George',
-  '5150': 'Bobby',
-  '2008': 'Jaime P',
-  '6239': 'Sly',
-  '4444': 'Zee',
-  '3979': 'Dylan S',
-  '9034': 'JDub',
-  '8818': 'Cris',
-  '5463': 'Arturo',
-  '3847': 'Eli',
-  '0419': 'Laker',
-  '7117': 'FernDawg',
-  '0001': 'KD',
-  '1234': 'Moh',
-  '2691': 'Quentin',
-  '8305': 'George T',
-  '4629': 'Frank',
-  '0301': 'Jeremy'
-};
 
 var AUTO_REFRESH_SECONDS = 30;
 
@@ -1159,30 +1145,20 @@ function renderQueue() {
 /* ===========================
    AUTH
    =========================== */
-function handleLogin() {
-  var input   = document.getElementById('operator-code');
-  var errorEl = document.getElementById('login-error');
-  var code    = input.value.trim();
+function handleDropdownLogin() {
+  var select = document.getElementById('operatorSelect');
+  var name = select.value;
+  if (!name) return;
 
-  if (OPERATORS[code]) {
-    errorEl.classList.remove('visible');
-    state.currentOperator = OPERATORS[code];
-    state.currentCode     = code;
+  state.currentOperator = name;
+  localStorage.setItem('kmjz_operator_name', name);
 
-    document.getElementById('operatorNameDisplay').textContent = state.currentOperator;
-    document.getElementById('operatorInitials').textContent    = getInitials(state.currentOperator);
+  document.getElementById('operatorNameDisplay').textContent = name;
+  document.getElementById('operatorInitials').textContent    = getInitials(name);
 
-    showScreen('screen-main');
-    loadBatches();
-    startAutoRefresh();
-    input.value = '';
-  } else {
-    errorEl.classList.remove('visible');
-    void errorEl.offsetWidth;
-    errorEl.classList.add('visible');
-    input.value = '';
-    input.focus();
-  }
+  showScreen('screen-main');
+  loadBatches();
+  startAutoRefresh();
 }
 
 function handleLogout() {
@@ -1259,16 +1235,7 @@ function escapeHtml(str) {
 /* ===========================
    EVENT LISTENERS
    =========================== */
-document.getElementById('login-btn').addEventListener('click', handleLogin);
-
-document.getElementById('operator-code').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') handleLogin();
-});
-
-// Auto-login on 4 chars
-document.getElementById('operator-code').addEventListener('input', function() {
-  if (this.value.length === 4) handleLogin();
-});
+document.getElementById('login-btn').addEventListener('click', handleDropdownLogin);
 
 document.getElementById('logout-btn').addEventListener('click', handleLogout);
 
@@ -1277,9 +1244,6 @@ document.getElementById('refresh-btn').addEventListener('click', function() {
   state.countdown = AUTO_REFRESH_SECONDS;
   showToast('Refreshed');
 });
-
-// Focus input on load
-document.getElementById('operator-code').focus();
 </script>
 
 <script>
